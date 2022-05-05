@@ -1,4 +1,5 @@
 var date = new Date();
+var scheduleObj;
 var months = [
     "January",
     "February",
@@ -39,13 +40,13 @@ var createTimeBlocks = function () {
         var timeRow = $("<div>").addClass("row");
         var timeHour = $("<div>").addClass("hour col-lg-1");
         var timeBlock = $("<div>").addClass("time-block col-lg-9");
-        var blockEvent = $("<textarea>").css({"width": "100%", "border": "none"});
+        var blockEvent = $("<textarea>").css({"width": "100%", "border": "none"}).attr('data-hour', i);
         var saveBtn = $("<button>").addClass("saveBtn col-lg-1");
         if (i < date.getHours()) {
             timeBlock.addClass("past");
         } else if (i == date.getHours()) {
             timeBlock.addClass("present");
-            blockEvent.val("Current Time");
+            blockEvent.text("Current Time");
         } else {
             timeBlock.addClass("future");
         }
@@ -66,8 +67,50 @@ var createTimeBlocks = function () {
         timeRow.append(timeHour, timeBlock, saveBtn);
         timeContainer.append(timeRow);
     }
+    scheduleObj = {
+        date: date.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear()
+    }
 
+    $(".time-block").on("click", "textarea", function () {
+        $(this).trigger("focus");
+    })
+
+    $(".time-block").on("blur", "textarea", function () {
+        scheduleObj["hour" + $(this).data("hour")] = $(this).val().trim();
+        saveToStorage();
+    })
 }
+
+createTimeBlocks();
+
+var saveToStorage = function () {
+    localStorage.setItem((date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear(), JSON.stringify(scheduleObj));
+}
+
+
+// $(".time-block").on("click", "p", function () {
+//     console.log("called")
+//     var text = $(this).text();
+//     var textInput = $("<textarea>")
+//     .css({"width": "100%", "border": "none"})
+//     .val(text);
+//     $(this).replaceWith(textInput);
+//     textInput.trigger("focus");
+// });
+
+// $(".time-block").on("blur", "textarea", function () {
+//     var text = $(this)
+//     .val()
+//     .trim();
+
+//     var timeBlockP = $("<p>")
+//     .css({"width": "100%", "border": "none"})
+//     .text(text);
+
+//     $(this).replaceWith(timeBlockP);
+// })
 
 $(function() {
     $('#datepicker').datepicker({
@@ -77,4 +120,3 @@ $(function() {
   });
 
 displayTime();
-createTimeBlocks();
