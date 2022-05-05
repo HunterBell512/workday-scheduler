@@ -38,11 +38,14 @@ var createTimeBlocks = function () {
     for (var i = 0; i < 24; i++) {
         var timeRow = $("<div>").addClass("row");
         var timeHour = $("<div>").addClass("hour col-lg-1");
-        var timeBlock = $("<div>").addClass("time-block col-lg-10");
+        var timeBlock = $("<div>").addClass("time-block col-lg-9");
+        var blockEvent = $("<textarea>").css({"width": "100%", "border": "none"});
+        var saveBtn = $("<button>").addClass("saveBtn col-lg-1");
         if (i < date.getHours()) {
             timeBlock.addClass("past");
         } else if (i == date.getHours()) {
             timeBlock.addClass("present");
+            blockEvent.val("Current Time");
         } else {
             timeBlock.addClass("future");
         }
@@ -59,11 +62,19 @@ var createTimeBlocks = function () {
         }
 
         timeHour.append(hourText);
-        timeRow.append(timeHour, timeBlock);
+        timeBlock.append(blockEvent);
+        timeRow.append(timeHour, timeBlock, saveBtn);
         timeContainer.append(timeRow);
     }
 
 }
+
+$(function() {
+    $('#datepicker').datepicker({
+      changeMonth: true,
+      changeYear: true
+    });
+  });
 
 displayTime();
 createTimeBlocks();
