@@ -13,13 +13,13 @@ var months = [
     "October",
     "November",
     "December"
-]
+];
 var suffixes = [
     "st",
     "nd",
     "rd",
     "th"
-]
+];
 
 var dateEl = $("#currentDay");
 var timeContainer = $("#time-container");
@@ -35,11 +35,11 @@ function displayTime () {
     dateEl.text("Today is: " + months[date.getMonth()] + " " + date.getDate() + tag + ", " + date.getFullYear());
 }
 
-var createTimeBlocks = function () {
+var initialLoad = function () {
     for (var i = 0; i < 24; i++) {
         var timeRow = $("<div>").addClass("row");
         var timeHour = $("<div>").addClass("hour col-lg-1");
-        var timeBlock = $("<div>").addClass("time-block col-lg-9");
+        var timeBlock = $("<div>").addClass("time-block col-lg-9").attr("data-hour-div", i);
         var blockEvent = $("<textarea>").css({"width": "100%", "border": "none"}).attr('data-hour', i);
         var saveBtn = $("<button>").addClass("saveBtn col-lg-1");
         if (i < date.getHours()) {
@@ -83,12 +83,65 @@ var createTimeBlocks = function () {
     })
 }
 
-createTimeBlocks();
+var loadTimes = function () {
+    var loadedDate = $("#datepicker").val();
+    loadedDate = loadedDate.split("/");
+
+    var dateObj = {
+        date: loadedDate[1].replace(/^0+/, ''),
+        month: loadedDate[0].replace(/^0+/, ''),
+        year: loadedDate[2] 
+    }
+
+    console.log(dateObj);
+
+    updateTimes(dateObj);
+}
+
+var updateTimes = function (obj) {
+    for (var i = 0; i < 24; i++) {
+        debugger;
+        var timeBlock = $('[data-hour-div~=' + i + ']')
+
+        timeBlock.removeClass("past present future");
+
+        if (obj.year > date.getFullYear()) {
+            timeBlock.addClass("future");
+        } else if (obj.year == date.getFullYear()) {
+            if (obj.month > (date.getMonth() + 1)) {
+                timeBlock.addClass("future");
+            } else if (obj.month == (date.getMonth() + 1)) {
+                if (obj.date > date.getDate()) {
+                    timeBlock.addClass("future");
+                } else if (obj.date == date.getDate()) {
+                    if (i > date.getHours()) {
+                        timeBlock.addClass("future");
+                    } else if (i == date.getHours()) {
+                        timeBlock.addClass("present");
+                    } else {
+                        timeBlock.addClass("past");
+                    }
+                } else {
+                    timeBlock.addClass("past");
+                }
+            } else {
+                timeBlock.addClass("past");
+            }
+        } else {
+            timeBlock.addClass("past");
+        }
+    }
+}
+
+initialLoad();
 
 var saveToStorage = function () {
     localStorage.setItem((date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear(), JSON.stringify(scheduleObj));
 }
 
+$(".load-btn").on("click", function() {
+    loadTimes();
+})
 
 // $(".time-block").on("click", "p", function () {
 //     console.log("called")
