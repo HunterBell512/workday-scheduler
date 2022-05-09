@@ -32,7 +32,7 @@ textarea{
   border-radius: 15px;
   border: none;
   color: white;
-  font-size: 20PX;
+  font-size: 20px;
   padding: 10px;
   margin-left: 10px;
 }
@@ -79,6 +79,7 @@ textarea{
   border-bottom-right-radius: 15px;
   background-color: #06AED5;
   color: white;
+  font-size: 25px;
 }
 
 .saveBtn i:hover {
